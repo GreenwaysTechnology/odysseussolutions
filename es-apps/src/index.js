@@ -1,19 +1,20 @@
-//function with returns
+//source code 
+console.log('a before declaration', a)
 
-function add(a = 0, b = 0) {
-    return a + b;
-}
-console.log(add())
-console.log(add(90, 10))
+console.log(b)
 
-function login(userName, password) {
-    if (userName === 'admin' && password == 'admin') {
-        return true
-    }
-    return; // undefined
-}
-let res = login('admin', 'admin') ? 'LoginSuccess' : 'LoginFailed'
-console.log(res)
+var a = 10
+//the variable is declared after declaration and initalization
+console.log('after a', a);
 
-res = login('admin', 'ddd') ? 'LoginSuccess' : 'LoginFailed'
-console.log(res)
+let b = 100
+
+console.log(b)
+
+//parsed code:
+//pushing variable declaration at top level is called "Hositing"
+// var a;
+// console.log(a)
+// a = 10
+// //the variable is declared after declaration and initalization
+// console.log(a);
