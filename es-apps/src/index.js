@@ -1,20 +1,24 @@
-//source code 
-console.log('a before declaration', a)
+function Employee() {
+    //single variable
+    this.id = 1;
+}
+let emp = new Employee();
+console.dir(emp)
+//add new property
+emp.name ='Subramanian'
+console.dir(emp)
+//update existing property
+// if prop exits update, else add.
+emp.name = 'Ram'
+emp.city ='Coimbatore'
+emp.state ='Tamil Nadu'
+console.dir(emp)
+//delete existing property
+delete emp.state
+//iterate :
+//loop - object loop
+for (const key in emp) {
+    //[] operator is used to get object keys
+   console.log(key,emp[key])
+}
 
-console.log(b)
-
-var a = 10
-//the variable is declared after declaration and initalization
-console.log('after a', a);
-
-let b = 100
-
-console.log(b)
-
-//parsed code:
-//pushing variable declaration at top level is called "Hositing"
-// var a;
-// console.log(a)
-// a = 10
-// //the variable is declared after declaration and initalization
-// console.log(a);

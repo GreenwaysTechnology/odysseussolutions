@@ -1288,9 +1288,332 @@ a = 10
 //the variable is declared after declaration and initalization
 console.log(a);
 
+let hai; //undefined
+
+hai() ---runtime error
+
+hai = function(){
+    console.log('hai')
+}
 
 
 3.compiled code
+
+//source code 
+console.log('a before declaration', a)
+
+//console.log(b)
+
+var a = 10
+//the variable is declared after declaration and initalization
+console.log('after a', a);
+
+let b = 100
+
+console.log(b)
+
+//parsed code:
+
+//pushing variable declaration at top level is called "Hositing"
+// var a;
+// console.log(a)
+// a = 10
+// //the variable is declared after declaration and initalization
+// console.log(a);
+
+/**
+ * Compile time 
+ *    -parsing time 
+ *        -code rearrangement happens
+ *               -hositing
+ * Runtime /execution time 
+ *       -assembly code 
+ */
+/////////////////////////////////////////////////////////////////////////////////////
+
+//this works fine 
+sayHello()
+
+function sayHello(){
+    console.log('Hello')
+}
+sayHello()
+
+hai()
+
+var hai = function(){
+    console.log('hai')
+}
+hai()
+...................................................................................
+
+functions and hositing:
+//hositing inside function code 
+
+/**any variables declared inside function also will be hosited inside function : function hositing */
+function add() {
+    console.log(a)
+    var a = 10;
+    var b = 20;
+    var c = a + b
+    console.log(a)
+}
+add()
+............
+block scope:
+   the life of variable is available within {} which is called block scope.
+
+function login(userName, password) {
+
+    console.log(foo)
+    if (userName === 'admin' && password === 'admin') {
+        var foo = 'bar'
+        console.log('login success')
+    }
+    console.log(foo)
+}
+login('admin','admin')
+
+undefined
+index.js:7 login success
+index.js:9 bar
+
+here also variable called foo is hoisted at function level, so js does not have blocking scope directly.
+
+What if i want block scope?
+
+ES 5:
+   Immediate-Invoked Function Expression (IIFE)
+
+//Immediate-Invoked Function Expression (IIFE)
+/**
+ * 1.anonmous function - 
+ * 2.gets invoked automatically.
+ * 3.In jquery
+ */
+
+var status = (function (lib) {
+    console.log('app', lib)
+    return 'done'
+})('jQuery')
+console.log(status)
+
+
+
+function login(userName, password) {
+    //console.log(foo)
+    if (userName === 'admin' && password === 'admin') {
+        (function () {
+            var foo = 'bar'
+            console.log('login success')
+        })()
+    }
+    console.log(foo)
+}
+login('admin', 'admin')
+
+ES 6 introduced new keyword which does not leak the scope- perserves the block scope-let and const
+
+
+// function login(userName, password) {
+//     //console.log(foo)
+//     if (userName === 'admin' && password === 'admin') {
+//         (function () {
+//             var foo = 'bar'
+//             console.log('login success')
+//         })()
+//     }
+//     console.log(foo)
+// }
+function login(userName, password) {
+        //console.log(foo)
+        if (userName === 'admin' && password === 'admin') {
+            // (function () {
+            //     var foo = 'bar'
+            //     console.log('login success')
+            // })()
+            let foo = 'bar'
+            console.log('login success',foo)
+        }
+        console.log(foo)
+    }
+login('admin', 'admin')
+.....................................................................................
+				 Objects and javascript
+
+According to ecma script spec, js is "object based langugage"
+
+Object orientation vs Object based language:
+............................................
+
+Javascript is not strongly typed language.rather weakly typed/dynamic typed
+
+int a=90;
+a =true
+compile time error.
+
+Data types are verfied against variable during compile time.
+
+
+var|let a=90;
+a =true
+here compile
+
+For OO , we need strong typing, then only we can implement 100% oo, since js is weakly type which has implemented less and particial features only.
+  if a language implements particial oo feature, which is called object based language.
+
+oop
+ ->Abstraction
+      classes
+ ->Encaspulation
+       private,public
+ ->Modularity
+     
+ ->Hierachy
+    has-a, is-a
+ ->Typing :strong typing
+     -polymorphism
+--------------------
+ ->Concurrency
+         Multi threading
+ ->Persistency
+        orm,storage
+
+Implementation:
+
+Object?
+  Which represents an noun(person,entity...)
+
+Object characteristics
+
+1.state - properties
+2.behahiour - actions which change/update property
+3.identity  - to identify object uniquly from other objec
+
+Object in program:
+
+=>memory representation
+=>collection of variables and methods - binding variables(state) and methods(behaviours)
+
+state:
+ instance variables
+methods
+ instance methods
+
+How to create objects in javascript?
+
+There are patterns
+
+1.constructor pattern
+  1.1.functions
+  1.2.classes
+2.literal pattern
+3.factory pattern
+
+
+//functions 
+/**
+ * 
+ * functions having logic starts verb or verb+Noun
+ *   eg add, addNumbers(),calculateInterest
+ * functions are treated as class like java and c++, functions names must be noun
+ *  eg: Employee,CreditCard,OrderService
+ *    
+ */
+
+function add() {
+    return 10 + 10
+}
+console.log(add())
+
+function Employee() {
+    //state : instance variables
+    this.id = 1
+    this.name = 'Subramanian'
+    //behaviour:methods
+    this.calculate = function () {
+        return 100
+    }
+}
+//new is keyword,
+//Employee()-function call/constructor call
+//emp is just variable, holding the memory address of object
+//emp is reference variable
+let emp = new Employee()
+
+//how to access object properties(state,behaviour)
+//. operator or [] operator
+console.log(`Id ${emp.id}`)
+console.log(`Name : ${emp.name}`)
+console.log(`Calculate : ${emp.calculate()}`)
+
+console.log(`Id ${emp['id']}`)
+console.log(`Name : ${emp['name']}`)
+console.log(`Calculate : ${emp.calculate()}`)
+
+
+What is internal structure of object?
+
+C++ decendants language object structure and js object structure is completly different
+Every js object is hashtable/dictionary/map- key -value
+
+key is string
+value is any literal
+
+Why js objects map?
+
+  js language is highly dynamic
+ during runtime objects can be modified
+
+This process is called as "Object augmentation"
+
+Add,update,delete,iterate object properties....
+
+
+function Employee() {
+    //single variable
+    this.id = 1;
+}
+let emp = new Employee();
+console.dir(emp)
+//add new property
+emp.name ='Subramanian'
+console.dir(emp)
+//update existing property
+// if prop exits update, else add.
+emp.name = 'Ram'
+emp.city ='Coimbatore'
+emp.state ='Tamil Nadu'
+console.dir(emp)
+//delete existing property
+delete emp.state
+//iterate :
+//loop - object loop
+for (const key in emp) {
+    //[] operator is used to get object keys
+   console.log(key,emp[key])
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
