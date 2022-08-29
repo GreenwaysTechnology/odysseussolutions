@@ -1595,6 +1595,459 @@ for (const key in emp) {
 }
 
 
+add()
+new add()
+
+
+
+//es 6 classes 
+
+class Employee {
+    //state : instance variables
+    id = 1
+    name = 'Subramanian'
+    //behaviour:methods
+    calculate() {
+        return 100
+    }
+}
+//object creation syntax
+let emp = new Employee()
+console.log(`id ${emp.id} ${emp.name} ${emp.calculate()}`)
+
+
+constructors :
+//state init using constructors
+
+function Employee(id = 0) {
+    this.id = id // hardcoded state 
+}
+
+//Employee() - this is constructor call
+let emp = new Employee(1) //constructor parameters
+console.log(emp)
+
+
+class Customer {
+    //id// hardcoded state
+    constructor(id = 0, name = '', city = '') {
+        this.id = id
+        this.name = name
+        this.city = city
+    }
+}
+//Customer() is constructor call
+let customer = new Customer()
+console.log(customer)
+
+
+Hoisting and classes:
+
+let customer = new Customer()
+console.log(customer)
+function Customer (){
+
+}
+
+//var emp1 = new Employee()
+
+class Employee {
+    constructor(id=0){
+        this.id =id;
+    }
+}
+let emp = new Employee()
+
+
+function declarations and class declarations is differ from "Hoisting".
+ function can be hoisted where as classes not.
+
+
+Class Expressions:
+ classes can be assigned to a variables.
+
+//class expression
+
+let Rectangle = class {
+    constructor(height, width) {
+        this.height = height;
+        this.width = width
+    }
+}
+let rect = new Rectangle(10,10)
+console.log(rect)
+
+Why: every class is a function.
+
+
+let Rectangle = class {
+    constructor(height, width) {
+        this.height = height;
+        this.width = width
+    }
+}
+let rect = new Rectangle(10,10)
+console.log(rect)
+
+console.log(typeof Rectangle) //Function.
+
+static keyword in es 6 :
+
+
+//variable types: instance variables,static variables
+//instance variables are accessed with help of "reference" where as static variables are accessed with "className.variableName"
+
+
+class Message {
+    static WARNING = 'Warning'
+    static ERROR = 'error'
+    static SUCCESS = 'success'
+   
+}
+console.log(Message.WARNING)
+
+class Factory {
+    //static methods 
+    static getInstance(){
+        return new Factory();
+    }    
+}
+let factory = Factory.getInstance()
+console.log(factory)
+////////////////////////////////////////////////////////////////////////////////////
+
+getters in classes:
+ 
+In javascript, when you access property, interally it calls implicit get method.
+
+emp.id ----> emp.getId
+
+//gridTemplateRows: 
+
+
+class Reactangle {
+    constructor(height = 0, width = 0) {
+        this.height = height
+        this.width = width
+    }
+    //getter property
+    get area(){
+        return this.calcArea()
+    }
+
+    //biz methods
+    calcArea(){
+        return this.height * this.width
+    }
+}
+let rct = new Reactangle(10,10)
+// console.log(rct.calcArea())
+console.log(rct.area)
+.....................................................................................
+			  Literal Objects
+.....................................................................................
+
+Objects are created without constructors(fun/class).
+//literal objects 
+/**
+ *   object defintion(properties and its value) are enclosed with {}
+ * 
+ *  syntax:
+ * let variable=  {
+ *    key:value, 
+ *    key:value
+ *  }
+ * key is variable
+ * value is literal
+ * literal can be any thing - nu/str/bool/unde,null,function,object,NaN
+ * type of literal is based on type of value
+ * 
+ * what is type of key?
+ *   the type of key always "string".
+ * type of key not need to explicity declared with "",''
+ * Can i declare with  in double quotes/single qutoes 
+ *    Yes
+ */
+
+let emp = {
+    id: 1,
+    name: 'Subramanian',
+    status: true
+}
+console.log(emp)
+//keys are strings-valid
+let user = {
+    "id": 1,
+    "name": 'Subramanian',
+    "status": true,
+    'city': 'Coimbatore'
+}
+console.log(user)
+
+//how to introduce functions inside literal object : methods
+
+let component = {
+    init: function () {
+        return 'init'
+    }
+}
+console.log(component.init())
+
+//arrow function
+component = {
+    init: () => 'init'
+}
+console.log(component.init())
+
+//e6 class method syntax
+component = {
+    init() {
+        return 'init'
+    },
+    destroy() {
+        return 'destroy'
+    },
+    fetch() {
+        return 'fetch'
+    }
+}
+console.log(component.init(),component.destroy(),component.fetch())
+
+//nested objects 
+let user = {
+    id: 1,
+    name: 'Subramanian',
+    //nested
+    address: {
+        city: 'Coimbatore'
+    },
+    location: {
+        geo: {
+            lat: 10.89,
+            lng: 90.89
+        }
+    }
+}
+console.log(user.id)
+console.log(user.name)
+console.log(user.address.city)
+console.log(user.location.geo.lat)
+console.log(user.location.geo.lng)
+
+
+
+
+// function printUserDetails(user) {
+//     console.log(`Id ${user.id}`)
+//     console.log(`Name ${user.name}`)
+//     console.log(`City ${user.address.city}`)
+//     console.log(`Lat ${user.location.geo.lat}`)
+//     console.log(`Lng ${user.location.geo.lng}`)
+// }
+//Object Destructuring : breaking object properties into local variables
+
+// function printUserDetails(user) {
+//     //Destructure : unpacking varibles from the object 
+//     const { id, name, address, location } = user
+//     console.log(`Id ${id}`)
+//     console.log(`Name ${name}`)
+//     console.log(`City ${address.city}`)
+//     console.log(`Lat ${location.geo.lat}`)
+//     console.log(`Lng ${location.geo.lng}`)
+// }
+//destructure nested properties
+// function printUserDetails(user) {
+//     //Destructure : unpacking varibles from the object 
+//     const { id, name, address: { city }, location: { geo: { lat, lng } } } = user
+//     console.log(`Id ${id}`)
+//     console.log(`Name ${name}`)
+//     console.log(`City ${city}`)
+//     console.log(`Lat ${lat}`)
+//     console.log(`Lng ${lng}`)
+// }
+
+//destructuring inside func arg.
+// function printUserDetails({ id, name, address: { city }, location: { geo: { lat, lng } } }) {
+//     console.log(`Id ${id}`)
+//     console.log(`Name ${name}`)
+//     console.log(`City ${city}`)
+//     console.log(`Lat ${lat}`)
+//     console.log(`Lng ${lng}`)
+// }
+
+//destructuring with arrow functions
+const printUserDetails = ({ id, name, address: { city }, location: { geo: { lat, lng } } }) => {
+    console.log(`Id ${id}`)
+    console.log(`Name ${name}`)
+    console.log(`City ${city}`)
+    console.log(`Lat ${lat}`)
+    console.log(`Lng ${lng}`)
+}
+//values are passed to the function in two ways
+//1.hardcoded 2.variables
+let user = {
+    id: 1,
+    name: 'Subramanian',
+    //nested
+    address: {
+        city: 'Coimbatore'
+    },
+    location: {
+        geo: {
+            lat: 10.89,
+            lng: 90.89
+        }
+    }
+}
+printUserDetails(user)
+
+//hardcoded values
+printUserDetails({
+    id: 1,
+    name: 'Subramanian',
+    //nested
+    address: {
+        city: 'Coimbatore'
+    },
+    location: {
+        geo: {
+            lat: 10.89,
+            lng: 90.89
+        }
+    }
+})
+....................................................................................
+
+//how to return object from the function and how to apply destructuring.
+
+// function getUserDetails() {
+//     let user = {
+//         id: 1,
+//         name: 'Subramanian',
+//         //nested
+//         address: {
+//             city: 'Coimbatore'
+//         },
+//         location: {
+//             geo: {
+//                 lat: 10.89,
+//                 lng: 90.89
+//             }
+//         }
+//     }
+//     return user ;
+// }
+
+// function getUserDetails() {
+//     //here we return hardcoded values
+//     //how to return dynamic objects with values
+//     return {
+//         id: 1,
+//         name: 'Subramanian',
+//         //nested
+//         address: {
+//             city: 'Coimbatore'
+//         },
+//         location: {
+//             geo: {
+//                 lat: 10.89,
+//                 lng: 90.89
+//             }
+//         }
+//     }
+// }
+
+//how to return dynamic properties
+// function getUserDetails(id = 1, name = 'Subramanian', city = 'Coimbatore', lat = 1.0, lng = 90.0) {
+//     return {
+//         id: id,
+//         name: name,
+//         //nested
+//         address: {
+//             city: city
+//         },
+//         location: {
+//             geo: {
+//                 lat: lat,
+//                 lng: lng
+//             }
+//         }
+//     }
+// }
+
+
+// function getUserDetails(id = 1, name = 'Subramanian', city = 'Coimbatore', lat = 1.0, lng = 90.0) {
+
+//     //if key:value ,leftSide:rightSide is same,return only one 
+//     return {
+//         id,
+//         name,
+//         //nested
+//         address: {
+//             city
+//         },
+//         location: {
+//             geo: {
+//                 lat,
+//                 lng
+//             }
+//         }
+//     }
+// }
+
+//arrow functions and object return
+const getUserDetails = (id = 1, name = 'Subramanian', city = 'Coimbatore', lat = 1.0, lng = 90.0) => ({
+    id,
+    name,
+    //nested
+    address: {
+        city
+    },
+    location: {
+        geo: {
+            lat,
+            lng
+        }
+    }
+})
+
+
+console.log(getUserDetails())
+console.log(getUserDetails(2, 'Ram', 'Chennai'))
+....................................................................................
+				classes and destructuring
+
+
+
+class Reactangle {
+    constructor(height = 0, width = 0) {
+        this.height = height
+        this.width = width
+    }
+    //biz methods
+    // calcArea() {
+    //     console.log('height func',this.height)
+    //     return this.height
+    // }
+    calcArea = () => {
+        console.log('height func', this.height)
+        return this.height
+    }
+}
+// let rct = new Reactangle(10,10)
+// console.log(rct.width)
+// console.log(rct.height)
+// console.log(rct.calcArea())
+let { width, height, calcArea } = new Reactangle(10, 10)
+
+let rect = new Reactangle(10, 10)
+
+console.log('width', width)
+console.log('height', height)
+console.log('area', rect.calcArea())
+console.log('area', calcArea())
+
+
 
 
 
