@@ -1,29 +1,29 @@
+//this  - implicit pointer, which is declared by js runtime and initalized to current instance memory location
+//super  -  implicit pointer which is delclared by js runtime and initalized to parent instance memory location
 
-
-class Reactangle {
-    constructor(height = 0, width = 0) {
-        this.height = height
-        this.width = width
-    }
-    //biz methods
-    // calcArea() {
-    //     console.log('height func',this.height)
-    //     return this.height
-    // }
-    calcArea = () => {
-        console.log('height func', this.height)
-        return this.height
+class Person {
+    constructor(firstName = '', lastName = '') {
+        this.firstName = firstName
+        this.lastName = lastName
     }
 }
-// let rct = new Reactangle(10,10)
-// console.log(rct.width)
-// console.log(rct.height)
-// console.log(rct.calcArea())
-let { width, height, calcArea } = new Reactangle(10, 10)
+Person.prototype.name = function () {
+    return `${this.firstName} ${this.lastName}`
+}
+class Employee extends Person {
+    constructor(id, firstName, lastName) {
+        super(firstName, lastName)
+        this.id = id
+    }
+}
+let emp = new Employee(10, 'Subramanian', 'Murugan')
+console.log(emp.name())
 
-let rect = new Reactangle(10, 10)
-
-console.log('width', width)
-console.log('height', height)
-console.log('area', rect.calcArea())
-console.log('area', calcArea())
+class Customer extends Person {
+    constructor(id, firstName, lastName) {
+        super(firstName, lastName)
+        this.id = id
+    }
+}
+let customer = new Customer(140, 'Subramanian', 'Shirisha')
+console.log(customer.name())

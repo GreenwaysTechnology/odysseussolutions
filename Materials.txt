@@ -2046,30 +2046,249 @@ console.log('width', width)
 console.log('height', height)
 console.log('area', rect.calcArea())
 console.log('area', calcArea())
+.....................................................................................
+			Hierachy - How to share code 
+
+1.HAS-A -Composition
+    
+//has -a 
+
+class Address {
+    constructor(city = '', state = '', zipcode = '') {
+        this.city = city
+        this.state = state
+        this.zipcode = zipcode
+    }
+}
+
+class Employee {
+    constructor(id = 0, name = '', address = new Address()) {
+        this.id = id
+        this.name = name
+        //has-a
+        this.address = address
+    }
+}
+let emp = new Employee()
+console.log(emp)
+
+emp = new Employee(12, 'subramanian', new Address('coimbatore', 'TN', '00000'))
+console.log(emp)
+
+//has -a in literals
+
+let customer = {
+    id: 1,
+    name: 'John',
+    //has-a
+    address: {
+        city: 'coimbatore',
+        state: 'TN'
+    }
+}
+
+console.log(customer)
 
 
 
 
+2.IS-A - inheritance
+   Javascript inhiertance is little confused when compare to javac/c++ as it is dynamic and does not have static types.
+
+In c++/java, inheritance is decided during compile time- class based
+In js inheritance is decided during runtime - Object based.
+
+Any object based inheritance, "Prototypical Inheritance"
+
+Prototype: 
+   A prototype is a delegation object used to implement prototype-based inheritance.
 
 
+Object Creations:
+ -Constructors
+ -literals
+ An object is a collection of properties, and has a single prototype object. The prototype may be either an object or the null value.
 
 
+Let’s take a basic example of an object. A prototype of an object is referenced by the internal [[Prototype]] property, which to user-level code is exposed via the __proto__ property.
 
 
+Employee {id: 1}
+id
+: 
+1
+[[Prototype]]
+: 
+Object
+constructor
+: 
+ƒ Employee()
+[[Prototype]]
+: 
+Object
+constructor
+: 
+ƒ Object()
+hasOwnProperty
+: 
+ƒ hasOwnProperty()
+isPrototypeOf
+: 
+ƒ isPrototypeOf()
+propertyIsEnumerable
+: 
+ƒ propertyIsEnumerable()
+toLocaleString
+: 
+ƒ toLocaleString()
+toString
+: 
+ƒ toString()
+valueOf
+: 
+ƒ valueOf()
+__defineGetter__
+: 
+ƒ __defineGetter__()
+__defineSetter__
+: 
+ƒ __defineSetter__()
+__lookupGetter__
+: 
+ƒ __lookupGetter__()
+__lookupSetter__
+: 
+ƒ __lookupSetter__()
+__proto__
+: 
+(...)
+get __proto__
+: 
+ƒ __proto__()
+set __proto__
+: 
+ƒ __proto__()
+
+By default Any Object if you create using constructors(fun/class) will have "Prototype Object as direct Parent" Which intern connects "Object" which is super object
+
+Employee----->ProtoType---->Object----->null
+
+By default Any Object if you create using literals will not have "Prototype Object as direct Parent" which directly connects "Object" which is super object
 
 
+customer----->---->Object----->null
+....................................................................................
+                        inheritance and property lookup.
+
+In java
+
+source code
+class A {
+  int a
+}
+class B extends A{
+  int b
+}
+
+compiled code
+class A {
+  int a
+}
+class B extends A{
+  int a
+  int b
+}
+
+b.a 
+b.b
+.............
+In js , properties are not copied when you access properties, rather which uses a concept call lookup.
 
 
+class Employee {
+    constructor(){
+        this.id =1;
+    }
+}
+let emp =new Employee()
+console.log(emp.id)
+
+here the runtime first will check in current object, if it is found, then it will return other it will lookup its parent if not again its lookup its parent so on until property match found...
+if no match found, it returns undefined.
+
+emp----|Employee--->Parent---->Parent----Object---No--undefined
 
 
+How to add Properties in the "ProtoType" Object?
+How to access Prototype Object?
+How to augment prototype Object?
 
+class Employee {
+    constructor() {
+        this.id = 1;
+    }
+}
 
+//add/Augment property in the Prototype Object 
+Employee.prototype.name = 'Subramanian'
+//Add property in the Object 
+Object.prototype.grade = 'Senior Manager'
 
+let emp = new Employee()
+//update the property
+emp.id = 900;
+emp.name ='Ram'
 
+console.log(emp)
+console.log(emp.id)
+console.log(emp.name)
+console.log(emp.grade)
 
+let emp1 = new Employee()
 
+console.log(emp1)
+console.log(emp1.name)
 
+let emp2 = new Employee()
 
+console.log(emp2)
+console.log(emp2.name)
+............................*************..........................................
+			What if i dont want "Prototype" as immediate Parent, I want to have my own parent.
+
+Employee ---->Prototype--->Object---|null
+
+Employee---->Person----Prototype--->Object---|null
+
+//this  - implicit pointer, which is declared by js runtime and initalized to current instance memory location
+//super  -  implicit pointer which is delclared by js runtime and initalized to parent instance memory location
+
+class Person {
+    constructor(firstName = '', lastName = '') {
+        this.firstName = firstName
+        this.lastName = lastName
+    }
+}
+Person.prototype.name = function () {
+    return `${this.firstName} ${this.lastName}`
+}
+class Employee extends Person {
+    constructor(id, firstName, lastName) {
+        super(firstName, lastName)
+        this.id = id
+    }
+}
+let emp = new Employee(10, 'Subramanian', 'Murugan')
+console.log(emp.name())
+
+class Customer extends Person {
+    constructor(id, firstName, lastName) {
+        super(firstName, lastName)
+        this.id = id
+    }
+}
+let customer = new Customer(140, 'Subramanian', 'Shirisha')
+console.log(customer.name())
 
 
 
