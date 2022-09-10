@@ -2289,6 +2289,271 @@ class Customer extends Person {
 }
 let customer = new Customer(140, 'Subramanian', 'Shirisha')
 console.log(customer.name())
+.....................................................................................
+
+Built in java  scripts:
+
+1.POJO - Plain old java objects
+
+2.DOM - Document object model - user interface.
+
+POJO:
+1.Object 
+ Object is super most parent object.... without which we cant create any object.
+
+Object.assign:
+  in order to create immutable object, we can use Object.assign method.
+
+Immutablity And Pure function
+.............................
+
+//Functional Programming Principle : pure function 
+
+/**
+ * Pure function:
+ *  1.A function is pure if function does not modify the input parameters  and also it should not do side effects.
+ * 2.if a function wants to modify the input parameters, it should return immuable object. 
+ */
+
+//Rule 1:
+//side effect: if function does io operation, mutations on parameters - side effects
+//if any function does side effects - impure function.
+
+//pure function
+function calculate(a) {
+    return a;
+}
+console.log(calculate(10))
+
+function TaskBar(props) {
+    return props
+}
+TaskBar({ title: 'Google Pages' })
+/////////////////////////////////////////////////////////////////////////////////////
+//Pure function rule 2:
+
+//How to make this function pure, -> return immutable object .
+
+//in order to make any function pure, we need to return immutable object.
+//Ways
+//1. return plain java script
+
+
+// function updateProfile(profile, city) {
+//     //update city;
+//     profile.city = city;
+//     return profile;
+// }
+
+// function updateProfile(profile, city) {
+//     //return new Object by copying old object properties
+//     return {
+//         id: profile.id,
+//         name: profile.name,
+//         city: city
+//     }
+// }
+
+//way 2: Object.assign
+
+// function updateProfile(profile, city) {
+//     //return new Object by copying old object properties
+//     return Object.assign({}, profile, { city: city })
+// }
+//way 3: using es 7 spread Operator.
+
+// function updateProfile(profile, city) {
+//     //return new Object by copying old object properties
+//     return { ...profile, city: city }
+// }
+const updateProfile = (profile, city) => ({ ...profile, city })
+
+let profile = {
+    id: 1,
+    name: 'subramanian',
+    city: 'chennai'
+}
+console.log('before update ', profile)
+const result = updateProfile(profile, 'coimbatore')
+console.log('After update', result)
+console.log(profile === result ? 'Same Object' : 'Different Object')
+.....................................................................................
+
+Object properties can be changed during runtime-Augmentation is always possible.
+
+Can we control object modification?
+
+Yes, With help of Object.freeze method.
+//Object augmentation and how to avoid that.
+
+const { log } = console;
+
+let profile = {
+    id: 1,
+    name: 'Subramanian'
+}
+Object.freeze(profile)
+log('Before Update Profile',profile)
+profile.city = 'Coimbatore'
+log('After Update Profile',profile)
+profile.name = 'Ram'
+log('After Update Profile',profile)
+delete profile.name
+log('After Update Profile',profile)
+
+
+
+const object1 = {};
+
+Object.defineProperties(object1, {
+  property1: {
+    value: 42,
+    writable: true
+  },
+  property2: {}
+});
+...............................................................................
+				Wrapper Objects
+................................................................................
+
+every primitive has equ Wrapper
+number --- Number
+//Numbers
+
+let a = 100 //Number
+let b = Number(20)
+console.log(a, b)
+
+console.log(Number.MAX_VALUE)
+
+let x = 10
+let y
+
+let z = x * y;
+if (Number.isNaN(z)) {
+    console.log('Number is NaN')
+} else {
+    console.log('Number is not NaN')
+}
+//Number instance
+//constructor pattern
+
+let mynum = new Number(100.89434)
+console.log(mynum.toFixed(2))
+//literal pattern
+let price = 3445.343434343
+console.log(price.toFixed(2))
+console.log(1212.44545.toFixed(3))
+
+
+String Object:
+//strings
+let name = 'hello'
+let city = new String('coimbatore')
+
+
+const sentence = 'The quick brown fox jumps over the lazy dog.';
+
+const word = 'fox';
+
+console.log(`The word "${word}" ${sentence.includes(word) ? 'is' : 'is not'} in the sentence`);
+// expected output: "The word "fox" is in the sentence"
+.....................................................................................
+
+Array Object:
+
+pure functions
+map => new 
+filter =>
+concat 
+.....
+
+//pattern
+// constructor pattern
+//new Array()
+//literal pattern
+// []
+
+let list = new Array(1, 2);
+console.log(list)
+let mylist = [1, 2, 34, 578]
+console.log(mylist)
+
+const doubleIt = item => item * 2
+mylist.map(doubleIt).forEach(item => console.log(item))
+..................................................................................
+				Non Blocking and async programming
+
+1.callbacks
+2.callback hell
+3.Promises
+4.Async await
+
+ Using api like timers,ajax api(XHR),fetch api,websockets,dom events
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
