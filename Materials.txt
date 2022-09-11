@@ -2491,31 +2491,358 @@ mylist.map(doubleIt).forEach(item => console.log(item))
 
  Using api like timers,ajax api(XHR),fetch api,websockets,dom events
 
+......
+
+Program executes seq:
+
+--|
+--|--takes more time
+--waiting
+--
+  |
+  |
+thread
+  |     
+ Runtime - jvm/clr..
+
+..................................................................................
+      Internal Arch of blocking and Non blocking Programming style
+...................................................................................
 
 
+Java IO:
+ FileInputStream fns = new FileInputStream("c:/temp/mytemp.txt")
+
+ fns.read()---java high level api to read single byte.
+
+ fns.read()-java api
+   |
+ java api layer- jni
+   |  
+  read() -jni api - written in c language
+   |
+  os layer---Linux/win/mac
+   |
+  read() -  os system call - written in c language
+   |
+Kernal Space   
+   |
+ File Descriptor
+
+.....................................................................................
+				 File Descriptors
+.....................................................................................
+
+1.File descriptors is simple array(ds),written in c language.
+2.File descriptor is associated with every process on os- if you run more than one process - will have more file descriptor table
+
+ jvm---------> fd 
+ browser-----> fd
+ notepad ---> fd
+
+fd is created when process is created, destroyed when process is destroyed...
+
+FD arch:
+Integer value	Name	<unistd.h> symbolic constant[1]	<stdio.h> file stream[2]
+0	Standard input	STDIN_FILENO	stdin
+1	Standard output	STDOUT_FILENO	stdout
+2	Standard error	STDERR_FILENO	stderr
+
+These values are standard which cant be altered.
+
+..
+
+Network io and web server:
+
+Any web server if you take, it works based on io model- socket-network io.
+
+Traditional web server, for every client request is  handled inside server by a thread.
+
+                    "Request Per Thread model"
 
 
+Non blocking apis were introduced in Linux  , in 2000.
+
+select - first linux api introduced to make non blocking calls.
+
+ Program
+  readByte ----->select----|kernalspace---make entry-
+                 <---control is returned immediately to the caller|
+.....................................................................................
+
+Event Loop:
+  It is while loop watching kernal fd table for data readnes
+Event Loop thread:
+  It is a thread listening for events which emitted by kernal.
+Callback/Listener
+   It is a function which has been registered for event notification.
+....................................................................................
+			How to implement/write non blocking/async programming
+
+Requirement:
+1.we need high level js api to initiate non blocking calls
+apis:
+ in browser
+ -timers - setTimeout,setInterval
+ -ajax api - XMLHTTPREQUEST api
+ -websocket api
+ -dom apis
+2.Listeners
+
+Styles:
+1.callback style
+2.Promise style
+3.async...await style....
+
+1.callback style:
+ function is passed as parameter to another-hof, which is registered for handling results because of delayed calls....
+  
+//non blocking using timer.
+
+function blockMe(message) {
+    console.log(message)
+}
+function connect(callback) {
+    //js non blocking api : setTimeout 
+    // callback()
+    setTimeout(callback, 5000, 'delayed response')
+}
+blockMe('hello')
+connect(function (response) {
+    console.log('connect',response)
+})
+blockMe('hai')
+....................................................................................
+			  callback chaining /Callback nesting
+...................................................................................
+
+The output of one callback will be input to the another callback.
+//callback chaining
+
+const getUser = (resolve, reject) => {
+    let user = {
+        name: 'admin',
+        password: 'admin'
+    }
+    if (user) {
+        setTimeout(resolve, 1000, user)
+    } else {
+        setTimeout(reject, 1000, { err: 'User not found' })
+    }
+}
+//the out put of getUser will be input to the login
+const login = (user, resolve, reject) => {
+    if (user.name === 'admin' && user.password === 'admin') {
+        setTimeout(resolve, 1000, 'login success')
+    } else {
+        setTimeout(reject, 1000, { err: 'login failed' })
+    }
+}
+
+//the out put login will be input to the dashboard function 
+const showdashboard = (status, resolve, reject) => {
+    if (status === 'login success') {
+        setTimeout(resolve, 1000, 'admin page')
+    } else {
+        setTimeout(reject, 1000, { err: 'user page' })
+    }
+}
 
 
+getUser(user => {
+    console.log(user)
+    login(user, status => {
+        console.log(status)
+        showdashboard(status, page => {
+            console.log(page)
+        }, err => {
+            console.log(err)
+        })
+    }, err => {
+        console.log(err)
+    })
+}, err => {
+    console.log(err)
+})
+...................................................................................
+				Callback Hell
+...................................................................................
+
+getUser(user => {
+    console.log(user)
+    login(user, status => {
+        console.log(status)
+        showdashboard(status, page => {
+            console.log(page)
+        }, err => {
+            console.log(err)
+        })
+    }, err => {
+        console.log(err)
+    })
+}, err => {
+    console.log(err)
+})
+
+Questions:
+
+1.Whether this code is able to understand quickly
+2.Whether this code is able to debug
+3.Whehter this code is scalable?
+4.whether this code is maintaiable?
+
+No.
+                     	 "Callback Hell"
+.............................................................................................
+
+fs.readdir(source, function (err, files) {
+  if (err) {
+    console.log('Error finding files: ' + err)
+  } else {
+    files.forEach(function (filename, fileIndex) {
+      console.log(filename)
+      gm(source + filename).size(function (err, values) {
+        if (err) {
+          console.log('Error identifying file size: ' + err)
+        } else {
+          console.log(filename + ' : ' + values)
+          aspect = (values.width / values.height)
+          widths.forEach(function (width, widthIndex) {
+            height = Math.round(width / aspect)
+            console.log('resizing ' + filename + 'to ' + height + 'x' + height)
+            this.resize(width, height).write(dest + 'w' + width + '_' + filename, function(err) {
+              if (err) console.log('Error writing file: ' + err)
+            })
+          }.bind(this))
+        }
+      })
+    })
+  }
+})
+
+Callback Hell:
+
+ -It is not bug or error in code
+ -It is way of writing callback based program
+ -Callback based non blocking programming hard to understand,maintain,debug,scale Which 
+  called as "Callback Hell".
+.....................................................................................
+
+How to write better async/non blocking code without callbacks?
+
+-Generally without callbacks not possible to write async/non blocking code.
+-Rather we can abstract complexity of writting callbacks.
 
 
+In 2005, JQUERY team started with working complex callback patterns, they found callback hell problem.
+
+They proposed a  Design pattern to write better callback programming(Async) programming.
+
+  "Promise".
+
+Promise is design pattern which hides complexity of callback patterns
 
 
+Since Promise is design pattern, many people have implemented Promise design pattern.
+
+1.JQuery -first promise implementation
+2.many libs and frameworks				
+
+In order standarize , ECMA committe decided to include Promise Design pattern at language level .(ES 6)
+2012 E6 Committe introduced promise design pattern  as  "Promise" Object  in javascript.
 
 
+Promise Object:
 
+   Essentially, a promise is a returned object to which you attach callbacks, instead of passing callbacks into a function.
+  Promise Object by default async, which means they have implemented timer with 0 ms by default.
 
+Promise Object Creation Patterns
+................................
 
+1.Factory pattern
+2.Constructor Pattern
 
+Promise object methods:
+1.then - success
+2.catch - errors
+3.finally - clean up
+factory api to create Promise object
+4.resolve
+5.reject
+.......................................
+6.all
+7.race
 
+//Promise Object by factory pattern
 
+function blockMe(message) {
+    console.log(message)
+}
+function delay() {
+    return Promise.resolve('Success')
+}
 
+blockMe('hello')
+delay()
+  .then(response => console.log(response))
+blockMe('hai')
 
+errors only:
+//Promise Object by factory pattern
 
+function blockMe(message) {
+    console.log(message)
+}
+function delay() {
+    return Promise.reject('something went wrong')
+}
 
+blockMe('hello')
+delay()
+  .catch(err=>console.log(err))
+blockMe('hai')
+..............
+Success and error
+//how to show success and reject 
 
+function login(userName, password) {
+    if (userName === 'admin' && password === 'admin') {
+        return Promise.resolve('Login success')
+    } else {
+        return Promise.reject('Login failed')
+    }
+}
+login('admin', 'admin')
+    .then(status => console.log(status))
+    .catch(err => console.log(err))
 
+login('foo', 'foo')
+    .then(status => console.log(status))
+    .catch(err => console.log(err))
+.................................................................................
 
+Constructor Pattern.
+
+//how to show success and reject 
+
+function login(userName, password) {
+    //constructor pattern
+    return new Promise((resolve, reject) => {
+        if (userName === 'admin' && password === 'admin') {
+            setTimeout(resolve, 5000, 'Login success')
+        } else {
+            setTimeout(reject, 5000, 'Login Failed')
+        }
+    })
+}
+login('admin', 'admin')
+    .then(status => console.log(status))
+    .catch(err => console.log(err))
+
+login('foo', 'foo')
+    .then(status => console.log(status))
+    .catch(err => console.log(err))
 
 
 
