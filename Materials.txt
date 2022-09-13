@@ -2843,6 +2843,476 @@ login('admin', 'admin')
 login('foo', 'foo')
     .then(status => console.log(status))
     .catch(err => console.log(err))
+.....................................................................................
+Promise Chaining:
+//callback chaining
+const getUser = () => {
+    console.log('getUser is called')
+    return new Promise((resolve, reject) => {
+        let user = {
+            name: 'admin',
+            password: 'admin'
+        }
+        if (user) {
+            setTimeout(resolve, 1000, user)
+        } else {
+            setTimeout(reject, 1000, { err: 'User not found' })
+        }
+    })
+}
+//the out put of getUser will be input to the login
+const login = user => {
+    console.log('login is called')
+
+    return new Promise((resolve, reject) => {
+        if (user.name === 'admin' && user.password === 'admin') {
+            setTimeout(resolve, 1000, 'login success')
+        } else {
+            setTimeout(reject, 1000, { err: 'login failed' })
+        }
+    })
+}
+
+//the out put login will be input to the dashboard function 
+const showdashboard = status => {
+    console.log('showDashBoard is called')
+    return new Promise((resolve, reject) => {
+        if (status === 'login success') {
+            setTimeout(resolve, 1000, 'admin page')
+        } else {
+            setTimeout(reject, 1000, { err: 'user page' })
+        }
+    })
+}
+
+//callback hell code 
+// getUser(user => {
+//     console.log(user)
+//     login(user, status => {
+//         console.log(status)
+//         showdashboard(status, page => {
+//             console.log(page)
+//         }, err => {
+//             console.log(err)
+//         })
+//     }, err => {
+//         console.log(err)
+//     })
+// }, err => {
+//     console.log(err)
+// })
+
+//promise chaining
+// getUser()
+//     .then(user => {
+//         login(user).then(status => {
+//             showdashboard(status)
+//                 .then(page => console.log(page)).catch(err => {
+//                     console.log(err)
+//                 })
+//         }).catch(err => {
+//             console.log(err)
+//         });
+//     })
+//     .catch(err => {
+//         console.log(err)
+// })
+//syntax simplification
+// getUser()
+//     .then(user => {
+//         return login(user)
+//     })
+//     .then(status => {
+//         return showdashboard(status)
+//     })
+//     .then(page => {
+//         console.log(page)
+//     })
+//     .catch(err => {
+//         console.log(err)
+//     })
+// getUser()
+//     .then(user => login(user))
+//     .then(status => showdashboard(status))
+//     .then(page => console.log(page))
+//     .catch(err => console.log(err))
+
+//using destrusturing syntax
+//if there is single arg and passed into the function : we can remove args 
+//method reference syntax 
+const { log } = console;
+getUser()
+    .then(login)
+    .then(showdashboard)
+    .then(log)
+    .catch(log)
+....................................................................................
+			Thenables
+
+If promise is going to be chained more, you can see lot of thens, how to avoid thens
+
+async...await keywords- es 7 feature
+
+async:
+ async is keyword used infront of functions- async functions.
+ async function by default return promises
+
+
+//async function 
+
+async function getValue(){
+    return 10 //Promise.resolve(10)
+}
+//console.log(getValue())
+getValue().then(res=>console.log(res))
+
+................................................................................
+async and await keywords
+
+inside async functions  you can resolve and reject promises without then and catch method.
+
+function login(userName, password) {
+    //constructor pattern
+    return new Promise((resolve, reject) => {
+        if (userName === 'admin' && password === 'admin') {
+            setTimeout(resolve, 100, 'Login success')
+        } else {
+            setTimeout(reject, 100, 'Login Failed')
+        }
+    })
+}
+
+async function main() {
+    // login('admin', 'admin')
+    // .then(status => console.log(status))
+    // .catch(err => console.log(err))
+    try {
+        const status = await login('admin', 'admin')
+        console.log(status)
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+main();
+....
+//callback chaining
+const getUser = () => {
+    console.log('getUser is called')
+    return new Promise((resolve, reject) => {
+        let user = {
+            name: 'admin',
+            password: 'admin'
+        }
+        if (user) {
+            setTimeout(resolve, 1000, user)
+        } else {
+            setTimeout(reject, 1000, { err: 'User not found' })
+        }
+    })
+}
+//the out put of getUser will be input to the login
+const login = user => {
+    console.log('login is called')
+
+    return new Promise((resolve, reject) => {
+        if (user.name === 'admin' && user.password === 'admin') {
+            setTimeout(resolve, 1000, 'login success')
+        } else {
+            setTimeout(reject, 1000, { err: 'login failed' })
+        }
+    })
+}
+
+//the out put login will be input to the dashboard function 
+const showdashboard = status => {
+    console.log('showDashBoard is called')
+    return new Promise((resolve, reject) => {
+        if (status === 'login success') {
+            setTimeout(resolve, 1000, 'admin page')
+        } else {
+            setTimeout(reject, 1000, { err: 'user page' })
+        }
+    })
+}
+
+// const { log } = console;
+// getUser()
+//     .then(login)
+//     .then(showdashboard)
+//     .then(log)
+//     .catch(log)
+
+async function main() {
+    try {
+        const user = await getUser();
+        const status = await login(user)
+        const page = await showdashboard(status)
+        console.log(page)
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+main()
+....................................................................................
+				Ajax Calls
+....................................................................................
+Using xhr:
+function fetch(method, url) {
+    return new Promise(function (resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        xhr.open(method, url);
+        xhr.onload = function () {
+            if (this.status >= 200 && this.status < 300) {
+                resolve(xhr.response);
+            } else {
+                reject({
+                    status: this.status,
+                    statusText: xhr.statusText
+                });
+            }
+        };
+        xhr.onerror = function () {
+            reject({
+                status: this.status,
+                statusText: xhr.statusText
+            });
+        };
+        xhr.send();
+    });
+}
+
+async function main() {
+    // fetch('GET', 'https://jsonplaceholder.typicode.com/posts')
+    // .then(function (posts) {
+    //     console.log(posts);
+    // })
+    // .catch(function (err) {
+    //     console.error('Augh, there was an error!', err.statusText);
+    // });
+    try {
+        const posts = await fetch('GET', 'https://jsonplaceholder.typicode.com/posts')
+        console.log(posts)
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+main()
+....................................................................................
+				XHR calls using libs and frameworks
+....................................................................................
+
+fetch api or fetch.js from the google. now it is added inside browser.
+if you want to target old browsers, you have to use poly fills
+
+fetch is abstraction on xhr, which is powered by promises by default
+
+
+function getPosts() {
+    return fetch('https://jsonplaceholder.typicode.com/posts')
+}
+
+async function main() {
+    try {
+        // const response = await getPosts()
+        // const posts = await response.json()
+        // console.log(posts)
+        const posts = await (await getPosts()).json()
+        console.log(posts)
+
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+main()
+....................................................................................
+			Scope Chain - Static and Dynamic Programming
+....................................................................................
+Static and dynamic programming:
+..............................
+
+static means parsing time expression binding
+
+dynamic means runtime epxression binding.
+
+expression ; collection of variables and its binding.
+
+eg:
+ var a =10; // expression
+
+scope;
+ Visitbility of variables.
+ Where it is visible
+
+Where means: The place where we have declared variables. 
+
+variable declaration places;
+
+1.inside script file.
+2.inside function
+3.function args.
+
+es 6:
+1.inside class
+2.inside script -modules
+
+
+"When visibility of a variable is activated"?
+
+Phases:
+ - Parsing phase
+ - Execution/ run time phase
+
+Types of scopes:
+
+1.static scope / lexical scope
+2.dynamic scope - runtime 
+3.augmented scope - deprecated in js now a days.
+
+1.static scope:
+
+A langauge implements static scope, if only by looking at the source code one can determine in which environment a binding is resolved.
+
+How to implement lexical scope/ static scope?
+
+//static scope.
+
+var a = 10;
+
+function print_a() {
+    console.log(`print_a function ${a}`);
+}
+
+function run() {
+    var a = 100;
+    console.log(`run method ${a}`);
+    print_a()
+}
+run();
+
+variable "a" for print_a function is free,since it's neither a parameter , nor a local variable of this function.
+
+The  variable "a'  is captured / bound / attached to print_a function ?
+
+ "during print_a function is created / initalized"
+
+ -lexcial scope / static scope.
+
+
+var a = 10;
+
+function fun1() {
+
+    console.log(`fun1 ${a}`);
+
+    function fun2() {
+        var a = 8;
+        console.log(`fun2 ${a}`);
+
+        function fun3() {
+            // var a = 8;
+            console.log(`fun3 ${a}`);
+
+        }
+        fun3()
+    }
+    fun2();
+
+}
+fun1()
+
+Variable binding resolution or scope chain:
+...........................................
+
+Lexical environment: 
+  A lexical environment is a structure used to define association between identifiers(variables) appearing in the context with their values. 
+
+Each environment can have a reference to an optional parent environment.
+
+So an environment is a storage of variables, functions, and classes defined in a scope.
+
+Types of env:
+
+1.Global Environment
+2.function environment
+
+Each environment is data structure- Hash table/Dictionary : key-value pair
+
+-key :
+Record:Value
+Parent:Value
+
+Value of Record would be another dictionary
+value of Parent is "pointer to another env"
+
+What record can have?
+Information about that env, storage information.
+
+Globlal Environment is env which hold other envs : Global Context
+
+
+let x = 10;
+let y = 20;
+ 
+function foo(z) {
+  let x = 100;
+  return x + y + z;
+}
+ 
+foo(30); // 150
+
+Look up theory:
+
+when a variable is accessed by a function.
+
+-It is looks in the current "Environment Record", if not present it will look its parent and so untile global env. if not present any where , it will throw error -"not defined"
+
+
+
+//inside script
+var x = 10;
+var y = 20;
+
+function foo(z) {
+    //inside function
+    let x = 100;
+    return x + y + z;
+}
+
+let r = foo(30); // 150
+console.log(r);
+
+var a = 10;
+
+function fun1() {
+
+    console.log(`fun1 ${a}`);
+
+    function fun2() {
+        var a = 88888;
+
+        console.log(`fun2 ${a}`);
+
+        function fun3() {
+            console.log(`fun3 ${a}`);
+        }
+        fun3()
+    }
+    fun2();
+
+}
+fun1()
+
+
+
+
+
+
+
+
 
 
 
