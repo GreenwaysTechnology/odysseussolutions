@@ -3268,7 +3268,7 @@ Look up theory:
 
 when a variable is accessed by a function.
 
--It is looks in the current "Environment Record", if not present it will look its parent and so untile global env. if not present any where , it will throw error -"not defined"
+-It is looks in the current "Environment Record", if not present it will look its parent and so until global env. if not present any where , it will throw error -"not defined"
 
 
 
@@ -3305,6 +3305,421 @@ function fun1() {
 
 }
 fun1()
+.....................................................................................
+Dynamic binding:
+
+Dynamic scope:
+
+  if langage implements dynamic scope, if a "Caller" who is calling function defines an activation environment of a "callee"
+
+
+caller  - object
+callee - function
+
+How to implement dynamic scope?
+
+  "with help of this keyword"
+
+
+this:
+   this is reference variable , which is implicit.
+   the value of "this" variable is determined and provided by exactly by the caller
+
+ eg:
+   var | let |const a =10 ;
+
+   this = ?
+
+Note:
+  the value of "this" may be changed in javascript during runtime using mode
+  
+mode:
+  1.strict 
+  2.non-strict
+
+Demo to know the value of "this"
+
+
+//Know the value of "this"
+
+function sayHello(){
+    return this  // value of this, will be dermined by the function caller scope .
+}
+console.log(sayHello())
+
+
+if you run this in browser, the result would be "Window"
+
+Window is object in browser .
+
+By default , any function is declared inside script,that function belongs to window object
+
+"the value of this , will determine that function belongs to whom.
+
+function fun1() {
+    console.log('fun1')
+    function fun2() {
+        console.log('fun 2')
+        return this;
+    }
+    console.log(fun2())
+    return this;
+}
+console.log(fun1())
+
+"this keyword" just like other variables like a and b but its value always points the address of object.
+
+  "this=objectaddress"
+
+By default  in js functions are called within script belongs to window object.
+
+..................................................................................
+				strict mode
+.................................................................................
+
+You know very well js was developed and tested in 10 days. 
+Javascript always has two areas
+ -good parts
+ -bad  parts
+
+java script strict enables good parts.
+
+"use strict"
+
+
+"use strict"
+
+function fun1() {
+    console.log('fun1')
+    function fun2() {
+        console.log('fun 2')
+        return this;
+    }
+    console.log(fun2())
+    return this;
+}
+console.log(fun1())
+
+in strict mode the value of "this would be" undefined, the owner of the function is not decided.
+....................................................................................
+How to bind function with object dynamically   or how to change the owner of function?
+
+in js function itself is Object , called "Function Object"
+
+
+Since function is object which has methods...
+
+1.call
+2.apply
+3.bind
+
+  "These methods are used to change the owner of function"
+
+1.call
+ The call() method calls the function with a given this value and arguments provided individually.
+
+function sayHello(){
+    console.log(this.message)
+    return this;
+}
+//owner of sayHello here is window
+
+message = 'Window message'
+
+console.log(sayHello())
+
+//change the owner of function .
+let greetings = {
+    message:'greetings message'
+}
+// sayHello.call(targetObject)
+sayHello.call(greetings)
+// console.log(sayHello())
+
+let hi = {
+    message:'Hi message'
+}
+sayHello.call(hi)
+..................................................................................
+			How to pass args to the function with call
+
+
+function sayHello(name,message){
+    console.log(this,name,message)
+}
+let greetings = {
+    name:'greetings'
+}
+sayHello.call(greetings,'subramanian','hello')
+
+let hai = {
+    name:'ha'
+}
+sayHello.call(hai,'subramanian','hai')
+....................................................................................
+
+apply:
+  apply(target,array)
+
+apply and call is same but only second args are different,which is array.
+function getStocks(args){
+  console.log(this,args)
+}
+const google = {
+    name:'google stock'
+}
+getStocks.apply(google,[{id:1,value:1222}])
+.................................................................................
+				bind
+
+lazy invocation, when you call bind method, it wont execute rather it returns reference of that function which is executed later.
+
+function onClick(response) {
+    console.log(response,this.name)
+}
+const MyButton = {
+    name: 'My Button'
+}
+const myListener = onClick.bind(MyButton)
+//trigger this function later on 
+// setTimeout(()=>myListener('Hello'),5000)
+setTimeout(myListener,5000,'Hello')
+.....................................................................................
+				Lexcial and dynamic scope togther
+.....................................................................................
+
+//lexcical and dynamic scope 
+
+const training = {
+    name: 'subramanian',
+    teach: function () {
+        console.log('teach function', this, this.name)
+        //inner function 
+        function learn(){
+            console.log('learn function')
+            console.log(this, this.name, 'is teaching')
+        }
+        learn() //called inside teach function 
+    }
+}
+training.teach()
+
+Points:
+ 1.when you call learn method, this bounds to global object in "non strict mode"-window
+
+what if i want to access "name" property of training object inside learn method?
+
+Solutions:
+
+1.Using "self" semantic 
+  self is not keyword but semantic variable
+
+const training = {
+    name: 'subramanian',
+    teach: function () {
+        console.log('teach function', this, this.name)
+       //local variable of teach will be accessiable inside learn
+        let self = this
+        function learn(){
+            console.log('learn function')
+            //console.log(this, this.name, 'is teaching')
+            console.log(self, self.name, 'is teaching')
+        }
+        learn() //called inside teach function 
+    }
+}
+training.teach()
+
+
+2.Using training reference variable directly inside learn method 
+  const training = {
+    name: 'subramanian',
+    teach: function () {
+        console.log('teach function', this, this.name)
+        function learn(){
+            console.log('learn function')
+            //console.log(this, this.name, 'is teaching')
+            // console.log(self, self.name, 'is teaching')
+            console.log(training, training.name, 'is teaching')
+
+        }
+        learn() //called inside teach function 
+    }
+}
+training.teach()
+
+
+3.Using functions call,apply,bind method
+//solution 3:
+const training = {
+    name: 'subramanian',
+    teach: function () {
+        console.log('teach function', this, this.name)
+        function learn(){
+            console.log('learn function')
+            //console.log(this, this.name, 'is teaching')
+            // console.log(self, self.name, 'is teaching')
+            console.log(this, this.name, 'is teaching')
+
+        }
+        //learn.call(training) 
+        learn.call(this)
+    }
+}
+training.teach()
+.............................................................................
+solution 4 : return the function and call later.
+
+//solution 4 : return the function and call later..
+
+const training = {
+    name: 'subramanian',
+    teach: function () {
+        console.log('teach function', this, this.name)
+        return function (){
+            console.log('learn function')
+            //console.log(this, this.name, 'is teaching')
+            // console.log(self, self.name, 'is teaching')
+            console.log(this, this.name, 'is teaching')
+
+        }
+    }
+}
+ const learn = training.teach()
+ learn.call(training)
+
+Solution :
+ without using function.call/apply/bind , how to attach function with object.
+
+ call ,apply method decides owner of the function during runtime - dynamic binding
+ -the value of "this" keyword is decided during runtime only when function is called
+ on particular object.
+
+ We have very advanced technique , through which we can decide the value of this during "lexical time/compile time" - arrow functions.
+
+"Arrow functions are lexically scoped with this keyword both in strict and nonstrict mode".
+
+//solution 5 : Arrow functions :lexcially scoped
+const training = {
+    name: 'subramanian',
+    teach: function () {
+        console.log('teach function', this, this.name)
+        // const learn = () => {
+        //     console.log('learn function')
+        //     console.log(this, this.name, 'is teaching')
+        // }
+        // learn()
+        return () => {
+            console.log('learn function')
+            console.log(this, this.name, 'is teaching')
+            return this;
+        }
+    }
+}
+console.log(training.teach()())
+.....................................................................................
+			  Modularity,DOM programming,w3c best practices
+.....................................................................................
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
